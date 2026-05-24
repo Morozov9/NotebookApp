@@ -55,7 +55,6 @@
                                 <div>
                                     <h5 class="card-title text-primary mb-1">
                                         @note.Title 
-                                        <!-- Кнопка-карандаш просто перенаправляет внутрь заметки -->
                                         <span class="text-muted fs-6" title="Редактировать">✏️</span>
                                     </h5>
                                     <span class="badge mb-2" style="background-color: @GetTagColor(note.Tag); color: @(Theme.IsDarkMode ? "#ffffff" : "#000000") !important;">
@@ -64,7 +63,6 @@
                                 </div>
                             </div>
                             
-                            <!-- Показываем только начало текста (первые 150 символов), чтобы список выглядел аккуратно -->
                             <p class="card-text text-secondary" style="white-space: pre-wrap;">
                                 @(note.Content.Length > 150 ? note.Content.Substring(0, 150) + "..." : note.Content)
                             </p>
@@ -87,16 +85,13 @@
 
     protected override async Task OnInitializedAsync()
     {
-        // 1. Загружаем заметки
         var savedNotes = await LocalStorage.GetItemAsync<List<Note>>("my_notes");
         if (savedNotes != null) notes = savedNotes;
-
-        // 2. Подписываемся на событие смены темы
-        // Когда пользователь нажмет кнопку в меню, этот метод заставит страницу обновиться
+        
+        // Когда пользователь нажмет кнопку в меню, этот метод поменяет тему страницы, и заставит её обновиться
         Theme.OnThemeChanged += StateHasChanged;
     }
-
-    // Улучшенный метод выбора цвета: адаптируется под тему
+    
     private string GetTagColor(string tag) 
     {
         if (Theme.IsDarkMode)
@@ -137,8 +132,7 @@
         await LocalStorage.SetItemAsync("my_notes", notes);
         newTitle = ""; newContent = ""; newTag = "Без тега";
     }
-
-    // Обязательный метод для предотвращения утечек памяти в C#
+    
     // Отписывает страницу от обновлений, когда пользователь уходит на другую вкладку
     public void Dispose()
     {
