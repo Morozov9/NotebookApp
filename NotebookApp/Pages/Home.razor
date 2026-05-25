@@ -46,20 +46,19 @@
     }
     else
     {
-
         <div class="row">
             @foreach (var note in notes.OrderByDescending(n => n.CreatedAt))
             {
                 <div class="col-12 mb-3">
                     <!-- Вся карточка кликабельна для перехода внутрь -->
-                    <div class="card h-100 shadow-sm border border-secondary card-hover"
-                         style="cursor: pointer;"
+                    <div class="card h-100 shadow-sm border border-secondary card-hover" 
+                         style="cursor: pointer;" 
                          @onclick="() => NavigateToNote(note.Id)">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div>
                                     <h5 class="card-title text-primary mb-1">
-                                        @note.Title
+                                        @note.Title 
                                         <!-- Кнопка-карандаш просто перенаправляет внутрь заметки -->
                                         <span class="text-muted fs-6" title="Редактировать">✏️</span>
                                     </h5>
@@ -68,8 +67,7 @@
                                     </span>
                                 </div>
                             </div>
-
-                            <!-- Показываем только начало текста (первые 150 символов), чтобы список выглядел аккуратно -->
+                            
                             <p class="card-text text-secondary" style="white-space: pre-wrap;">
                                 @(note.Content.Length > 150 ? note.Content.Substring(0, 150) + "..." : note.Content)
                             </p>
@@ -97,20 +95,16 @@
     
     private DateParser _dateParser = new DateParser();
 
-    
-    
     protected override async Task OnInitializedAsync()
     {
         // 1. Загружаем заметки
         var savedNotes = await LocalStorage.GetItemAsync<List<Note>>("my_notes");
         if (savedNotes != null) notes = savedNotes;
-
-        // 2. Подписываемся на событие смены темы
-        // Когда пользователь нажмет кнопку в меню, этот метод заставит страницу обновиться
+        
+        // Когда пользователь нажмет кнопку в меню, этот метод поменяет тему страницы, и заставит её обновиться
         Theme.OnThemeChanged += StateHasChanged;
     }
-
-    // Улучшенный метод выбора цвета: адаптируется под тему
+    
     private string GetTagColor(string tag) 
     {
         if (Theme.IsDarkMode)
@@ -160,8 +154,7 @@
         
 
     }
-
-    // Обязательный метод для предотвращения утечек памяти в C#
+    
     // Отписывает страницу от обновлений, когда пользователь уходит на другую вкладку
     public void Dispose()
     {
