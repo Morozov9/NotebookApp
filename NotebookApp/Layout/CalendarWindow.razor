@@ -36,7 +36,7 @@
 @code {
 
     private Note? lastNote;
-    private DateParser _dateParser = new DateParser();
+    private DateParser _dateParser = new();
 
     // Переменная состояния окна (скрыто/показано)
     private bool isModalVisible = false;
@@ -68,20 +68,17 @@
         CloseModal();
     }
     
-    private async Task HandleConfirmios()
+    private async Task HandleConfirmIos()
     {
         if (lastNote != null)
         {
             var dates = _dateParser.ParseDates(lastNote.Content);
 
-
-                // TODO сделать чтобы все события добавлялись из одного файла .ics
+            await JsRuntime.InvokeVoidAsync("downloadIcsFile", "NotebookAppEvents.ics", AppleCalendar.AppleCalendarFile(lastNote, dates));
         }
 
         CloseModal();
     }
-    
-    
     
 
     private void HandleCancel()

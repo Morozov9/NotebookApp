@@ -73,7 +73,7 @@
     }
 </div>
 
-<GoogleCalendarWindow @ref="ModalWindow"/>
+<CalendarWindow @ref="ModalWindow"/>
 
 
 @code {
@@ -90,7 +90,7 @@
     private DateParser _dateParser = new DateParser();
 
     
-    private GoogleCalendarWindow ModalWindow { get; set; } = null!;
+    private CalendarWindow ModalWindow { get; set; } = null!;
     
     
     protected override void OnInitialized()

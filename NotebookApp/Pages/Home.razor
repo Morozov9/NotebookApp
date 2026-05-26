@@ -81,7 +81,7 @@
     }
 </div>
 
-<GoogleCalendarWindow @ref="ModalWindow"/>
+<CalendarWindow @ref="ModalWindow"/>
 
 
 @code {
@@ -92,9 +92,9 @@
     private string newContent = "";
     private string newTag = "Без тега";
     
-    private GoogleCalendarWindow ModalWindow { get; set; } = null!;
+    private CalendarWindow ModalWindow { get; set; } = null!;
     
-    private DateParser _dateParser = new DateParser();
+    private DateParser _dateParser = new();
 
     protected override async Task OnInitializedAsync()
     {
