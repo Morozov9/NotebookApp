@@ -1,8 +1,6 @@
 ﻿namespace NotebookApp.Utils;
 
-using System.Text.RegularExpressions;
-using System.Globalization;
-using NotebookApp.Models;
+using Models;
 
 public static class GoogleCalendar
 {

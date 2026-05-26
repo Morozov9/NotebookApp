@@ -11,10 +11,23 @@
     <!-- Сам контейнер окна -->
     <div class="custom-modal" style="background-color: @GetTagColor(lastNote.Tag); color: @(Theme.IsDarkMode ? "#ffffff" : "#000000") !important;">
         <h3>Подтверждение</h3>
-        <p>В вашей заметке есть дата, хотите добавить событие в этот день в google календарь?</p>
+        @if (OsChecker.GetOperatingSystem() == "win")
+        {
+            <p>В вашей заметке есть дата, хотите добавить событие в этот день в google календарь?</p>
+        }
+        else
+        {
+            <p>В вашей заметке есть дата, хотите добавить событие в этот день в apple календарь?</p>
+        }
 
         <div class="modal-buttons">
-            <button class="btn btn-success" @onclick="HandleConfirm">Да</button>
+            @if (OsChecker.GetOperatingSystem() == "win")
+            {
+                <button class="btn btn-success" @onclick="HandleConfirmWin">Да</button>
+            }
+            else{
+                <button class="btn btn-success" @onclick="HandleConfirmIos">Да</button>
+            }
             <button class="btn btn-danger" @onclick="HandleCancel">Нет</button>
         </div>
     </div>
@@ -22,7 +35,7 @@
 
 @code {
 
-    private Note lastNote;
+    private Note? lastNote;
     private DateParser _dateParser = new DateParser();
 
     // Переменная состояния окна (скрыто/показано)
@@ -39,7 +52,7 @@
 
     private void CloseModal() => isModalVisible = false;
 
-    private async Task HandleConfirm()
+    private async Task HandleConfirmWin()
     {
         if (lastNote != null)
         {
@@ -54,6 +67,22 @@
 
         CloseModal();
     }
+    
+    private async Task HandleConfirmios()
+    {
+        if (lastNote != null)
+        {
+            var dates = _dateParser.ParseDates(lastNote.Content);
+
+
+                // TODO сделать чтобы все события добавлялись из одного файла .ics
+        }
+
+        CloseModal();
+    }
+    
+    
+    
 
     private void HandleCancel()
     {
