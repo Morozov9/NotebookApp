@@ -58,7 +58,6 @@
         {
             var dates = _dateParser.ParseDates(lastNote.Content);
 
-
             foreach (var date in dates)
             {
                 await JsRuntime.InvokeVoidAsync("open", GoogleCalendar.LinkToGoogleCalendar(lastNote, date), "_blank");
