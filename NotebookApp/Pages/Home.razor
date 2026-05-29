@@ -48,13 +48,29 @@
     {
         
         <div class="row">
-            @foreach (var note in notes.OrderByDescending(n => n.CreatedAt))
+            @foreach (var note in notes.OrderByDescending(n => n.IsPinned).ThenByDescending(n => n.EditedAt))
             {
                 <div class="col-12 mb-3">
                     <!-- Вся карточка кликабельна для перехода внутрь -->
                     <div class="card h-100 shadow-sm border border-secondary card-hover"
                          style="cursor: pointer;"
                          @onclick="() => NavigateToNote(note.Id)">
+                        
+                        @if (!note.IsPinned)
+                        {
+                            <button class="invisible-btn" type="button" @onclick="() => Pin(note, true)" @onclick:stopPropagation>
+                                @* <button class="invisible-btn" type="button" @onclick="() => a(note)" @onclick:stopPropagation> *@
+                                <img src="icons/PinWhite.png" alt="Иконка кнопки">
+                            </button>
+                        }
+                        else
+                        {
+                            <button class="invisible-btn" type="button" @onclick="() => Pin(note, false)" @onclick:stopPropagation>
+                                <img src="icons/PinBlack.png" alt="Иконка кнопки">
+                            </button>
+                        }
+                        
+                        
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div>
@@ -132,6 +148,13 @@
                 _ => "#e5e5e5"             // Светло-серый для "Без тега"
             };
         }
+    }
+
+
+    private async Task Pin(Note note, bool pin)
+    {
+        note.IsPinned = pin;
+        await LocalStorage.SetItemAsync("my_notes", notes);
     }
 
     private void NavigateToNote(Guid id)
