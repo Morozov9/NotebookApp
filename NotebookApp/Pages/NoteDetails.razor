@@ -126,6 +126,7 @@
         note.Title = editTitle;
         note.Content = editContent;
         note.Tag = editTag;
+        note.EditedAt = DateTime.Now;
 
         await LocalStorage.SetItemAsync("my_notes", allNotes);
         isEditing = false;
