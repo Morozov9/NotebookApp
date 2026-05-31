@@ -89,6 +89,7 @@
                                 @(note.Content.Length > 150 ? note.Content.Substring(0, 150) + "..." : note.Content)
                             </p>
                             <small class="text-muted d-block mt-2">🕒 @note.CreatedAt.ToString("g")</small>
+                            <small class="text-muted d-block mt-2">✏️ @note.EditedAt.ToString("g")</small>
                         </div>
                     </div>
                 </div>
