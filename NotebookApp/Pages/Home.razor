@@ -15,10 +15,21 @@
 
     <!-- Форма создания заметки -->
     <div class="card p-3 mb-4 shadow-sm border border-secondary">
-        <h5>Новая заметка</h5>
-        <div class="mb-2">
-            <input type="text" class="form-control" placeholder="Заголовок..." @bind="newTitle"/>
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5>Новая заметка</h5>
+            <!-- Приписка об обязательности заголовка -->
+            <small class="text-danger fw-bold">* Заголовок обязателен для заполнения</small>
         </div>
+    
+        <div class="mb-2">
+            <!-- Добавили динамический класс валидации border-danger, если поле пустое -->
+            <input type="text" 
+                   class="form-control @(string.IsNullOrWhiteSpace(newTitle) ? "border-danger-subtle" : "")" 
+                   placeholder="Заголовок заметки..." 
+                   @bind="newTitle" 
+                   @bind:event="oninput" />
+        </div>
+
         <div class="mb-2">
             <select class="form-select" @bind="newTag">
                 @foreach (var tag in availableTags)
@@ -73,12 +84,10 @@
                         
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-start">
+                                <h5 class="card-title text-primary mb-1">
+                                    @note.Title 
+                                </h5>
                                 <div>
-                                    <h5 class="card-title text-primary mb-1">
-                                        @note.Title
-                                        <!-- Кнопка-карандаш просто перенаправляет внутрь заметки -->
-                                        <span class="text-muted fs-6" title="Редактировать">✏️</span>
-                                    </h5>
                                     <span class="badge mb-2" style="background-color: @GetTagColor(note.Tag); color: @(Theme.IsDarkMode ? "#ffffff" : "#000000") !important;">
                                         🏷️ @note.Tag
                                     </span>
