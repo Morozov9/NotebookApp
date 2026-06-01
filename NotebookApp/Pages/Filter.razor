@@ -24,6 +24,22 @@
             </button>
         }
     </div>
+    
+    <div class="mb-4">
+        <div class="input-group shadow-sm">
+            <span class="card h-100 shadow-sm border border-secondary card-hover">🔍</span>
+            <input type="text" 
+                   class="form-control border-secondary" 
+                   placeholder="Поиск по названию или тексту заметки..." 
+                   value="@SearchString" 
+                   @oninput="OnSearchInput" />
+            @if (!string.IsNullOrEmpty(SearchString))
+            {
+                <!-- Кнопка очистки поиска, если что-то введено -->
+                <button class="btn btn-outline-secondary" @onclick="ClearSearch">❌</button>
+            }
+        </div>
+    </div>
 
     <!-- Список отфильтрованных заметок -->
     <div class="row">
@@ -41,7 +57,6 @@
                         @if (!note.IsPinned)
                         {
                             <button class="invisible-btn" type="button" @onclick="() => Pin(note, true)" @onclick:stopPropagation>
-                                @* <button class="invisible-btn" type="button" @onclick="() => a(note)" @onclick:stopPropagation> *@
                                 <img src="icons/PinWhite.png" alt="Иконка кнопки">
                             </button>
                         }
@@ -60,6 +75,7 @@
                                 @(note.Content.Length > 150 ? note.Content.Substring(0, 150) + "..." : note.Content)
                             </p>
                             <small class="text-muted">🕒 Создано: @note.CreatedAt.ToString("g")</small>
+                            <small class="text-muted d-block mt-2">✏️ @note.EditedAt.ToString("g")</small>
                         </div>
                     </div>
                 </div>
@@ -73,6 +89,40 @@
     private List<Note> notes = new();
     private List<string> availableTags = new() { "Без тега", "Учёба", "Работа", "Личное", "Идеи" };
     private string selectedTag = "Все";
+    private string SearchString { get; set; } = "";
+
+    
+    private IEnumerable<Note> FilteredNotes
+    {
+        get
+        {
+            IEnumerable<Note> filterTags = selectedTag == "Все" ? notes.OrderByDescending(n => n.IsPinned).ThenByDescending(n => n.CreatedAt).ToList() 
+                : notes.Where(n => n.Tag == selectedTag).OrderByDescending(n => n.IsPinned).ThenByDescending(n => n.CreatedAt).ToList();
+            
+            
+            if (string.IsNullOrWhiteSpace(SearchString))
+            {
+                return filterTags;
+            }
+
+            return filterTags
+                .Where(n => n.Title.Contains(SearchString, StringComparison.OrdinalIgnoreCase) || 
+                            n.Content.Contains(SearchString, StringComparison.OrdinalIgnoreCase))
+                .OrderByDescending(n => n.IsPinned).ThenByDescending(n => n.EditedAt);
+        }
+    }
+
+    private void OnSearchInput(ChangeEventArgs e)
+    {
+        SearchString = e.Value?.ToString() ?? "";
+    }
+
+    private void ClearSearch()
+    {
+        SearchString = "";
+    }
+    
+    
 
     protected override async Task OnInitializedAsync()
     {
@@ -82,10 +132,6 @@
         // Подписываемся на динамическое обновление темы
         Theme.OnThemeChanged += StateHasChanged;
     }
-
-    private List<Note> FilteredNotes => selectedTag == "Все" 
-        ? notes.OrderByDescending(n => n.IsPinned).ThenByDescending(n => n.CreatedAt).ToList() 
-        : notes.Where(n => n.Tag == selectedTag).OrderByDescending(n => n.IsPinned).ThenByDescending(n => n.CreatedAt).ToList();
 
     // Метод определения цвета (точно такой же, как на главной)
     private string GetTagColor(string tag) => Theme.IsDarkMode ? tag switch
