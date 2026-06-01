@@ -83,13 +83,13 @@
                         
                         @if (!note.IsPinned)
                         {
-                            <button class="invisible-btn" type="button" @onclick="() => Pin(note, true)" @onclick:stopPropagation>
+                            <button title="закрепить" class="invisible-btn" type="button" @onclick="() => Pin(note, true)" @onclick:stopPropagation>
                                 <img src="icons/PinWhite.png" alt="Иконка кнопки">
                             </button>
                         }
                         else
                         {
-                            <button class="invisible-btn" type="button" @onclick="() => Pin(note, false)" @onclick:stopPropagation>
+                            <button title="открепить" class="invisible-btn" type="button" @onclick="() => Pin(note, false)" @onclick:stopPropagation>
                                 <img src="icons/PinBlack.png" alt="Иконка кнопки">
                             </button>
                         }
