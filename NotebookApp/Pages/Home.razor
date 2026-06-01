@@ -218,12 +218,12 @@
 
     private async Task AddNote()
     {
-        var note = new Note { Title = newTitle, Content = newContent, Tag = newTag };
+        var dates = _dateParser.ParseDates(newContent);
+        var note = new Note { Title = newTitle, Content = newContent, Tag = newTag , Dates = dates};
         notes.Add(note);
         await LocalStorage.SetItemAsync("my_notes", notes);
         newTitle = ""; newContent = ""; newTag = "Без тега";
         
-        var dates = _dateParser.ParseDates(note.Content);
 
         if (dates.Count != 0)
         {

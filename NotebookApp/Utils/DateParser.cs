@@ -9,6 +9,8 @@ public class DateParser
     private readonly Regex _regexWithoutYear = new(@"(?<!\d)((0[1-9]|[12]\d|3[01]|[1-9])(?i)\.(0[1-9]|1[0-2]))(?=\s|$)");
     private readonly Regex _regexWithShortWords = new(@"(?<!\d)(0[1-9]|[12]\d|3[01]|[1-9])\s+(?i)(янв|фев|мар|апр|ма[йя]|июн|июл|авг|сен|окт|нояб|дек)(?=\s|\.|$)");
     private readonly Regex _regexWithWords = new(@"(?<!\d)(0[1-9]|[12]\d|3[01]|[1-9])\s+(?i)(январ|феврал|март|апрел|ма[йя]|июн|июл|август|сентябр|октябр|ноябр|декабр)[а-яА-ЯёЁ]*\b");
+    
+    
 
     private readonly Dictionary<string, string> _monthNumbers = new()
         {

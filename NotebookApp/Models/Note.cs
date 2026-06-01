@@ -10,4 +10,5 @@ public class Note
     public DateTime? ReminderTime { get; set; }
     public bool IsPinned { get; set; } = false;
     public DateTime EditedAt { get; set; } = DateTime.Now;
+    public List<DateTime> Dates { get; set; } = new();
 }

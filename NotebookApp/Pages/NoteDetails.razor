@@ -145,8 +145,9 @@
         isEditing = false;
         
         var dates = _dateParser.ParseDates(note.Content);
+        bool areEqual = dates.OrderBy(x => x).SequenceEqual(note.Dates.OrderBy(x => x));
 
-        if (dates.Count != 0)
+        if (dates.Count != 0 && !areEqual)
         {
             ModalWindow.OpenModal(note);
         }
