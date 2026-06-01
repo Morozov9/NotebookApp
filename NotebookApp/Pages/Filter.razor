@@ -37,6 +37,22 @@
             {
                 <div class="col-12 mb-3">
                     <div class="card h-100 shadow-sm border border-secondary" style="cursor: pointer;" @onclick='() => Navigation.NavigateTo($"/note/{note.Id}")'>
+                        
+                        @if (!note.IsPinned)
+                        {
+                            <button class="invisible-btn" type="button" @onclick="() => Pin(note, true)" @onclick:stopPropagation>
+                                @* <button class="invisible-btn" type="button" @onclick="() => a(note)" @onclick:stopPropagation> *@
+                                <img src="icons/PinWhite.png" alt="Иконка кнопки">
+                            </button>
+                        }
+                        else
+                        {
+                            <button class="invisible-btn" type="button" @onclick="() => Pin(note, false)" @onclick:stopPropagation>
+                                <img src="icons/PinBlack.png" alt="Иконка кнопки">
+                            </button>
+                        }
+                        
+                        
                         <div class="card-body">
                             <h5 class="card-title text-primary">@note.Title <span class="text-muted fs-6">✏️</span></h5>
                             <span class="badge mb-2" style="background-color: @GetTagColor(note.Tag); color: @(Theme.IsDarkMode ? "#ffffff" : "#000000") !important;">🏷️ @note.Tag</span>
@@ -68,8 +84,8 @@
     }
 
     private List<Note> FilteredNotes => selectedTag == "Все" 
-        ? notes.OrderByDescending(n => n.CreatedAt).ToList() 
-        : notes.Where(n => n.Tag == selectedTag).OrderByDescending(n => n.CreatedAt).ToList();
+        ? notes.OrderByDescending(n => n.IsPinned).ThenByDescending(n => n.CreatedAt).ToList() 
+        : notes.Where(n => n.Tag == selectedTag).OrderByDescending(n => n.IsPinned).ThenByDescending(n => n.CreatedAt).ToList();
 
     // Метод определения цвета (точно такой же, как на главной)
     private string GetTagColor(string tag) => Theme.IsDarkMode ? tag switch
@@ -87,6 +103,12 @@
         "Идеи" => "#fefae0",
         _ => "#e5e5e5"
     };
+    
+    private async Task Pin(Note note, bool pin)
+    {
+        note.IsPinned = pin;
+        await LocalStorage.SetItemAsync("my_notes", notes);
+    }
 
     public void Dispose()
     {
