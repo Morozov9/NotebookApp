@@ -114,6 +114,12 @@ code {
     text-align: start;
 }
 
+.right-side{
+    position: absolute;
+    right: 0; /* Прижимает к правому краю */
+}
+
+
 
 .invisible-btn {
     /* Делаем кнопку невидимой */
@@ -122,9 +128,7 @@ code {
     padding: 0;
     cursor: pointer;
     outline: none;
-    position: absolute;
-    right: 0; /* Прижимает к правому краю */
-    
+
     
     /* Делаем кнопку строго квадратной */
     width: 25px;

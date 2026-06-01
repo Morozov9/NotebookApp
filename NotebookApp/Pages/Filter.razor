@@ -56,26 +56,46 @@
                         
                         @if (!note.IsPinned)
                         {
-                            <button title="закрепить" class="invisible-btn" type="button" @onclick="() => Pin(note, true)" @onclick:stopPropagation>
-                                <img src="icons/PinWhite.png" alt="Иконка кнопки">
+                            <button title="закрепить" class="invisible-btn right-side" type="button" @onclick="() => Pin(note, true)" @onclick:stopPropagation>
+                                <img src="icons/pin/PinWhite.png" alt="Иконка кнопки">
                             </button>
                         }
                         else
                         {
-                            <button title="открепить" class="invisible-btn" type="button" @onclick="() => Pin(note, false)" @onclick:stopPropagation>
-                                <img src="icons/PinBlack.png" alt="Иконка кнопки">
+                            <button title="открепить" class="invisible-btn right-side" type="button" @onclick="() => Pin(note, false)" @onclick:stopPropagation>
+                                <img src="icons/pin/PinBlack.png" alt="Иконка кнопки">
                             </button>
                         }
                         
                         
                         <div class="card-body">
-                            <h5 class="card-title text-primary">@note.Title <span class="text-muted fs-6">✏️</span></h5>
+                            <h5 class="card-title text-primary">
+                                @note.Title <span class="text-muted fs-6"></span>
+                                
+                                @if (!note.Star)
+                                {
+                                    <button title="избранное" class="invisible-btn" type="button" style="margin-left: 10px;" @onclick="() => Star(note, true)" @onclick:stopPropagation>
+                                        <img src="icons/star/starBlack.png" alt="Иконка кнопки">
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button title="избранное" class="invisible-btn" type="button" style="margin-left: 10px;" @onclick="() => Star(note, false)" @onclick:stopPropagation>
+                                        <img src="icons/star/starYellow.png" alt="Иконка кнопки">
+                                    </button>
+                                }
+                                
+                                
+                            </h5>
                             <span class="badge mb-2" style="background-color: @GetTagColor(note.Tag); color: @(Theme.IsDarkMode ? "#ffffff" : "#000000") !important;">🏷️ @note.Tag</span>
                             <p class="card-text text-secondary" style="white-space: pre-wrap;">
                                 @(note.Content.Length > 150 ? note.Content.Substring(0, 150) + "..." : note.Content)
                             </p>
                             <small class="text-muted">🕒 Создано: @note.CreatedAt.ToString("g")</small>
-                            <small class="text-muted d-block mt-2">✏️ @note.EditedAt.ToString("g")</small>
+                            @if (note.EditedAt != note.CreatedAt)
+                            {
+                                <small class="text-muted d-block mt-2">✏️ Изменено: @note.EditedAt.ToString("g")</small>
+                            }
                         </div>
                     </div>
                 </div>
@@ -120,6 +140,12 @@
     private void ClearSearch()
     {
         SearchString = "";
+    }
+    
+    private async Task Star(Note note, bool star)
+    {
+        note.Star = star;
+        await LocalStorage.SetItemAsync("my_notes", notes);
     }
     
     

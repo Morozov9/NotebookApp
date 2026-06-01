@@ -11,4 +11,5 @@ public class Note
     public bool IsPinned { get; set; } = false;
     public DateTime EditedAt { get; set; } = DateTime.Now;
     public List<DateTime> Dates { get; set; } = new();
+    public bool Star { get; set; } = false;
 }
