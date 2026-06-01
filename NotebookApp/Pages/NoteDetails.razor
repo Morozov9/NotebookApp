@@ -140,12 +140,17 @@
         note.Content = editContent;
         note.Tag = editTag;
         note.EditedAt = DateTime.Now;
+        
+        var dates = _dateParser.ParseDates(note.Content);
+        bool areEqual = dates.OrderBy(x => x).SequenceEqual(note.Dates.OrderBy(x => x));
+        if (!areEqual)
+        {
+            note.Dates = dates;
+        }
 
         await LocalStorage.SetItemAsync("my_notes", allNotes);
         isEditing = false;
         
-        var dates = _dateParser.ParseDates(note.Content);
-        bool areEqual = dates.OrderBy(x => x).SequenceEqual(note.Dates.OrderBy(x => x));
 
         if (dates.Count != 0 && !areEqual)
         {
