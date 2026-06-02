@@ -55,8 +55,11 @@
         
         <div class="mb-2 d-flex align-items-center gap-2">
             <label class="form-label mb-0">Цвет заметки:</label>
-            <input type="color" @bind="newNoteColor" style="width: 50px; height: 40px; cursor: pointer;" />
-            <div style="width: 30px; height: 30px; border-radius: 50%; background-color: @newNoteColor; border: 1px solid #ccc;"></div>
+            <div style="position: relative; width: 36px; height: 36px;">
+                <input type="color" @bind="newNoteColor" @bind:event="oninput"
+                       style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; border-radius: 50%;" />
+                <div style="width: 100%; height: 100%; border-radius: 50%; background-color: @(newNoteColor + "20"); border: 2px solid #ccc; pointer-events: none;"></div>
+            </div>
         </div>
         
         <div class="mb-2">
