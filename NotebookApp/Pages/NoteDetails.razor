@@ -30,8 +30,11 @@
                 
                 <div class="mb-3 d-flex align-items-center gap-2">
                     <label class="form-label font-weight-bold mb-0">Цвет заметки:</label>
-                    <input type="color" @bind="editColor" style="width: 50px; height: 40px; cursor: pointer;" />
-                    <div style="width: 30px; height: 30px; border-radius: 50%; background-color: @editColor; border: 1px solid #ccc;"></div>
+                    <div style="position: relative; width: 36px; height: 36px;">
+                        <input type="color" @bind="editColor" @bind:event="oninput"
+                               style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; border-radius: 50%;" />
+                        <div style="width: 100%; height: 100%; border-radius: 50%; background-color: @(editColor + "20"); border: 2px solid #ccc; pointer-events: none;"></div>
+                    </div>
                 </div>
 
                 <div class="mb-3">
@@ -76,7 +79,7 @@
                         
                         <div class="mt-1 d-flex align-items-center gap-2">
                             <span class="text-muted small">Цвет заметки:</span>
-                            <div style="width: 20px; height: 20px; border-radius: 50%; background-color: @note.Color; border: 1px solid #ccc;"></div>
+                            <div style="width: 20px; height: 20px; border-radius: 50%; background-color: @(note.Color + "20"); border: 1px solid #ccc;"></div>
                             <span class="text-muted small">@note.Color</span>
                         </div>
                         
