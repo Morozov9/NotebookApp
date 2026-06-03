@@ -102,13 +102,13 @@
                                 
                                 @if (!note.Star)
                                 {
-                                    <button title="избранное" class="invisible-btn" type="button" style="margin-left: 10px;" @onclick="() => Star(note, true)" @onclick:stopPropagation>
+                                    <button title="важоне" class="invisible-btn" type="button" style="margin-left: 10px;" @onclick="() => Star(note, true)" @onclick:stopPropagation>
                                         <img src="icons/star/starBlack.png" alt="Иконка кнопки">
                                     </button>
                                 }
                                 else
                                 {
-                                    <button title="избранное" class="invisible-btn" type="button" style="margin-left: 10px;" @onclick="() => Star(note, false)" @onclick:stopPropagation>
+                                    <button title="важное" class="invisible-btn" type="button" style="margin-left: 10px;" @onclick="() => Star(note, false)" @onclick:stopPropagation>
                                         <img src="icons/star/starYellow.png" alt="Иконка кнопки">
                                     </button>
                                 }

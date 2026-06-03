@@ -13,4 +13,5 @@ public class Note
     public DateTime EditedAt { get; set; } = DateTime.Now;
     public List<DateTime> Dates { get; set; } = new();
     public bool Star { get; set; } = false;
+    public bool IsAddedToCalendar { get; set; } = false;
 }

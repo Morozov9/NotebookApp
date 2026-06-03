@@ -57,11 +57,13 @@
         if (lastNote != null)
         {
             var dates = _dateParser.ParseDates(lastNote.Content);
+            lastNote.IsAddedToCalendar = true;
 
             foreach (var date in dates)
             {
                 await JsRuntime.InvokeVoidAsync("open", GoogleCalendar.LinkToGoogleCalendar(lastNote, date), "_blank");
             }
+            
         }
 
         CloseModal();
@@ -72,9 +74,11 @@
         if (lastNote != null)
         {
             var dates = _dateParser.ParseDates(lastNote.Content);
+            lastNote.IsAddedToCalendar = true;
 
             await JsRuntime.InvokeVoidAsync("downloadIcsFile", "NotebookAppEvents.ics", AppleCalendar.AppleCalendarFile(lastNote, dates));
         }
+        
 
         CloseModal();
     }
