@@ -48,7 +48,7 @@
             <select @bind="sortBy" class="form-select w-auto" style="width: 220px;">
                 <option value="CreatedAt">📅 Дате создания</option>
                 <option value="EditedAt">📅 Дате редактирования</option>
-                <option value="Star">⭐ Избранному</option>
+                <option value="Star">⭐ Важности</option>
             </select>
         </div>
         
@@ -85,13 +85,13 @@
                         
                         @if (!note.IsPinned)
                         {
-                            <button title="закрепить" class="invisible-btn right-side" type="button" @onclick="() => Pin(note, true)" @onclick:stopPropagation>
+                            <button title="Закрепить" class="invisible-btn right-side" type="button" @onclick="() => Pin(note, true)" @onclick:stopPropagation>
                                 <img src="icons/pin/PinWhite.png" alt="Иконка кнопки">
                             </button>
                         }
                         else
                         {
-                            <button title="открепить" class="invisible-btn right-side" type="button" @onclick="() => Pin(note, false)" @onclick:stopPropagation>
+                            <button title="Открепить" class="invisible-btn right-side" type="button" @onclick="() => Pin(note, false)" @onclick:stopPropagation>
                                 <img src="icons/pin/PinBlack.png" alt="Иконка кнопки">
                             </button>
                         }
@@ -102,13 +102,13 @@
                                 
                                 @if (!note.Star)
                                 {
-                                    <button title="важоне" class="invisible-btn" type="button" style="margin-left: 10px;" @onclick="() => Star(note, true)" @onclick:stopPropagation>
+                                    <button title="Важное" class="invisible-btn" type="button" style="margin-left: 10px; width: 17px; height: 17px" @onclick="() => Star(note, true)" @onclick:stopPropagation>
                                         <img src="icons/star/starBlack.png" alt="Иконка кнопки">
                                     </button>
                                 }
                                 else
                                 {
-                                    <button title="важное" class="invisible-btn" type="button" style="margin-left: 10px;" @onclick="() => Star(note, false)" @onclick:stopPropagation>
+                                    <button title="Важное" class="invisible-btn" type="button" style="margin-left: 10px; width: 17px; height: 17px" @onclick="() => Star(note, false)" @onclick:stopPropagation>
                                         <img src="icons/star/starYellow.png" alt="Иконка кнопки">
                                     </button>
                                 }
