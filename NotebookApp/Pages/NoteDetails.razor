@@ -79,8 +79,16 @@
                 <div class="text-muted mt-4 pt-2 border-top fs-6">
                     🕒 Дата создания: @note.CreatedAt.ToString("F")
                     <br />
-                    ✏️ Дата изменения: @note.EditedAt.ToString("F")
+                    ✏️ Дата редактирования: @note.EditedAt.ToString("F")
+                    @if (note.IsAddedToCalendar)
+                    {
+                        <br \>
+                        <span>
+                            🗓️ Добавлено в календарь
+                        </span>
+                    }
                 </div>
+
             }
         </div>
     }

@@ -74,13 +74,13 @@
                                 
                                 @if (!note.Star)
                                 {
-                                    <button title="важоне" class="invisible-btn" type="button" style="margin-left: 10px;" @onclick="() => Star(note, true)" @onclick:stopPropagation>
+                                    <button title="важоне" class="invisible-btn" type="button" style="margin-left: 10px; width: 17px; height: 17px" @onclick="() => Star(note, true)" @onclick:stopPropagation>
                                         <img src="icons/star/starBlack.png" alt="Иконка кнопки">
                                     </button>
                                 }
                                 else
                                 {
-                                    <button title="важное" class="invisible-btn" type="button" style="margin-left: 10px;" @onclick="() => Star(note, false)" @onclick:stopPropagation>
+                                    <button title="важное" class="invisible-btn" type="button" style="margin-left: 10px; width: 17px; height: 17px" @onclick="() => Star(note, false)" @onclick:stopPropagation>
                                         <img src="icons/star/starYellow.png" alt="Иконка кнопки">
                                     </button>
                                 }
@@ -92,9 +92,12 @@
                                 @(note.Content.Length > 150 ? note.Content.Substring(0, 150) + "..." : note.Content)
                             </p>
                             <small class="text-muted">🕒 Создано: @note.CreatedAt.ToString("g")</small>
-                            @if (note.EditedAt != note.CreatedAt)
+                            <small class="text-muted d-block mt-2">✏️ Изменено: @note.EditedAt.ToString("g")</small>
+                            @if (note.IsAddedToCalendar)
                             {
-                                <small class="text-muted d-block mt-2">✏️ Изменено: @note.EditedAt.ToString("g")</small>
+                                <span class="right-side text-muted" style="margin-top: -10px; margin-right: 10px">
+                                    🗓️ добавлено в календарь
+                                </span>
                             }
                         </div>
                     </div>

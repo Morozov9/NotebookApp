@@ -1,15 +1,16 @@
 ﻿@inject IJSRuntime JsRuntime
 @using NotebookApp.Utils
 @inject ThemeService Theme
+@inject ILocalStorageService LocalStorage
 
 
-@if (isModalVisible)
+@if (_isModalVisible)
 {
     <!-- Задний фон (затемнение) -->
     <div class="modal-backdrop" @onclick="CloseModal"></div>
 
     <!-- Сам контейнер окна -->
-    <div class="custom-modal" style="background-color: @GetTagColor(lastNote!.Tag); color: @(Theme.IsDarkMode ? "#ffffff" : "#000000") !important;">
+    <div class="custom-modal" style="background-color: @GetTagColor(_lastNote!.Tag); color: @(Theme.IsDarkMode ? "#ffffff" : "#000000") !important;">
         <h3>Подтверждение</h3>
         @if (OsChecker.GetOperatingSystem() == "win")
         {
@@ -34,34 +35,48 @@
 }
 
 @code {
-
-    private Note? lastNote;
+    
+    
+    [Parameter]
+    public List<Note> Notes { get; set; } = new();
+    
+    [Parameter]
+    public EventCallback<List<Note>> NotesChanged { get; set; }
+    
+    private Note? _lastNote;
     private DateParser _dateParser = new();
 
     // Переменная состояния окна (скрыто/показано)
-    private bool isModalVisible = false;
+    private bool _isModalVisible = false;
 
     // Метод открытия
     public void OpenModal(Note note)
     {
-        lastNote = note;
-        isModalVisible = true;
+        _lastNote = note;
+        _isModalVisible = true;
         StateHasChanged();
     }
 
 
-    private void CloseModal() => isModalVisible = false;
+    private void CloseModal() => _isModalVisible = false;
 
     private async Task HandleConfirmWin()
     {
-        if (lastNote != null)
+        if (_lastNote != null)
         {
-            var dates = _dateParser.ParseDates(lastNote.Content);
-            lastNote.IsAddedToCalendar = true;
+            var dates = _dateParser.ParseDates(_lastNote.Content);
+            _lastNote.IsAddedToCalendar = true;
+            
+            var noteIndex = Notes.FindIndex(n => n.Id == _lastNote.Id);
+            if (noteIndex != -1)
+            {
+                Notes[noteIndex] = _lastNote;
+                await NotesChanged.InvokeAsync(Notes);
+            }
 
             foreach (var date in dates)
             {
-                await JsRuntime.InvokeVoidAsync("open", GoogleCalendar.LinkToGoogleCalendar(lastNote, date), "_blank");
+                await JsRuntime.InvokeVoidAsync("open", GoogleCalendar.LinkToGoogleCalendar(_lastNote, date), "_blank");
             }
             
         }
@@ -71,14 +86,20 @@
     
     private async Task HandleConfirmIos()
     {
-        if (lastNote != null)
+        if (_lastNote != null)
         {
-            var dates = _dateParser.ParseDates(lastNote.Content);
-            lastNote.IsAddedToCalendar = true;
+            var dates = _dateParser.ParseDates(_lastNote.Content);
+            _lastNote.IsAddedToCalendar = true;
+            
+            var noteIndex = Notes.FindIndex(n => n.Id == _lastNote.Id);
+            if (noteIndex != -1)
+            {
+                Notes[noteIndex] = _lastNote;
+                await NotesChanged.InvokeAsync(Notes);
+            }
 
-            await JsRuntime.InvokeVoidAsync("downloadIcsFile", "NotebookAppEvents.ics", AppleCalendar.AppleCalendarFile(lastNote, dates));
+            await JsRuntime.InvokeVoidAsync("downloadIcsFile", "NotebookAppEvents.ics", AppleCalendar.AppleCalendarFile(_lastNote, dates));
         }
-        
 
         CloseModal();
     }
@@ -117,5 +138,5 @@
             };
         }
     }
-
+    
 }
