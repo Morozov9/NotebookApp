@@ -32,7 +32,10 @@
         <div class="d-flex justify-content-between align-items-center mb-2">
             <h5>Новая заметка</h5>
             <!-- Приписка об обязательности заголовка -->
-            <small class="text-danger fw-bold">* Заголовок обязателен для заполнения</small>
+            @if (TitleIsIncorrect)
+            {
+                <small class="text-danger fw-bold">* Заголовок обязателен для заполнения</small>
+            }
         </div>
     
         <div class="mb-2">
@@ -65,7 +68,7 @@
         <div class="mb-2">
             <textarea class="form-control" rows="3" placeholder="Текст заметки..." @bind="newContent"></textarea>
         </div>
-        <button class="btn btn-primary w-100" @onclick="AddNote" disabled="@(string.IsNullOrWhiteSpace(newTitle))">
+        <button class="btn btn-primary w-100" @onclick="AddNote">
             Добавить заметку
         </button>
     </div>
@@ -175,11 +178,11 @@
     private string newTag = "Без тега";
     private string newNoteColor = "#ffffff";
     private string SearchString { get; set; } = "";
+    private bool TitleIsIncorrect;
     
     private CalendarWindow ModalWindow { get; set; } = null!;
 
     private DateParser _dateParser = new();
-    
     
 
     private IEnumerable<Note> FilteredNotes
@@ -273,6 +276,15 @@
 
     private async Task AddNote()
     {
+        if (string.IsNullOrWhiteSpace(newTitle))
+        {
+            TitleIsIncorrect = true;
+            return;
+        }
+
+        TitleIsIncorrect = false;
+        
+        
         var dates = _dateParser.ParseDates(newContent);
         var note = new Note { Title = newTitle, Content = newContent, Tag = newTag , Dates = dates, Color = newNoteColor};
         notes.Add(note);
