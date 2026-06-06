@@ -132,9 +132,12 @@
 
                                 </h5>
                                 <div>
-                                    <span class="badge mb-2" style="background-color: @GetTagColor(note.Tag); color: @(Theme.IsDarkMode ? "#ffffff" : "#000000") !important; margin-right: 20px">
-                                        🏷️ @note.Tag
-                                    </span>
+                                    @if (note.Tag != "Без тега")
+                                    {
+                                        <span class="badge mb-2" style="background-color: @GetTagColor(note.Tag); color: @(Theme.IsDarkMode ? "#ffffff" : "#000000") !important; margin-right: 20px">
+                                            🏷️ @note.Tag
+                                        </span>
+                                    }
                                 </div>
                             </div>
 
