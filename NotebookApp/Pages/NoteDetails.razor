@@ -72,11 +72,12 @@
                 <div class="d-flex justify-content-between align-items-start border-bottom pb-2 mb-3">
                     <div>
                         <h2 class="text-primary mb-1">@note.Title</h2>
-                        <!-- Адаптивный бейдж тега с авто-подбором цвета текста -->
-                        <span class="badge mb-2" style="background-color: @GetTagColor(note.Tag); color: @(Theme.IsDarkMode ? "#ffffff" : "#000000") !important;">
-                            Тег: 🏷️ @note.Tag
-                        </span>
-                        
+                        @if (note.Tag != "Без тега")
+                        {
+                            <span class="badge mb-2" style="background-color: @GetTagColor(note.Tag); color: @(Theme.IsDarkMode ? "#ffffff" : "#000000") !important;">
+                                Тег: 🏷️ @note.Tag
+                            </span>
+                        }
                         <div class="mt-1 d-flex align-items-center gap-2">
                             <span class="text-muted small">Цвет заметки:</span>
                             <div style="width: 20px; height: 20px; border-radius: 50%; background-color: @(note.Color + "20"); border: 1px solid #ccc;"></div>

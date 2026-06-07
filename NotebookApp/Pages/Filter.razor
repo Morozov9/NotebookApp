@@ -99,36 +99,42 @@
                         
                         
                         <div class="card-body">
-                            <h5 class="card-title text-primary">
-                                @note.Title
-                                
-                                @if (!note.Star)
-                                {
-                                    <button title="Важное" class="invisible-btn" type="button" style="margin-left: 10px; width: 17px; height: 17px" @onclick="() => Star(note, true)" @onclick:stopPropagation>
-                                        <img src="icons/star/starBlack.png" alt="Иконка кнопки">
-                                    </button>
-                                }
-                                else
-                                {
-                                    <button title="Важное" class="invisible-btn" type="button" style="margin-left: 10px; width: 17px; height: 17px" @onclick="() => Star(note, false)" @onclick:stopPropagation>
-                                        <img src="icons/star/starYellow.png" alt="Иконка кнопки">
-                                    </button>
-                                }
-                            </h5>
-                            @if (note.Tag != "Без тега")
-                            {
-                                <span class="badge mb-2" style="background-color: @GetTagColor(note.Tag); color: @(Theme.IsDarkMode ? "#ffffff" : "#000000") !important;">
-                                    🏷️ @note.Tag
-                                </span>
-                            }
+                            <div class="d-flex justify-content-between align-items-start">
+                                <h5 class="card-title text-primary mb-1">
+                                    @note.Title
 
-                            
+
+                                    @if (!note.Star)
+                                    {
+                                        <button title="Важное" class="invisible-btn" type="button" style="margin-left: 10px; width: 17px; height: 17px" @onclick="() => Star(note, true)" @onclick:stopPropagation>
+                                            <img src="icons/star/starBlack.png" alt="Иконка кнопки">
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button title="Важное" class="invisible-btn" type="button" style="margin-left: 10px; width: 17px; height: 17px" @onclick="() => Star(note, false)" @onclick:stopPropagation>
+                                            <img src="icons/star/starYellow.png" alt="Иконка кнопки">
+                                        </button>
+                                    }
+
+                                </h5>
+                                <div>
+                                    @if (note.Tag != "Без тега")
+                                    {
+                                        <span class="badge mb-2" style="background-color: @GetTagColor(note.Tag); color: @(Theme.IsDarkMode ? "#ffffff" : "#000000") !important; margin-right: 20px">
+                                            🏷️ @note.Tag
+                                        </span>
+                                    }
+                                </div>
+                            </div>
+
                             <p class="card-text text-secondary" style="white-space: pre-wrap;">
                                 @(note.Content.Length > 150 ? note.Content.Substring(0, 150) + "..." : note.Content)
                             </p>
-                            
-                            <small class="text-muted">🕒 Создано: @note.CreatedAt.ToString("g")</small>
-                            <small class="text-muted d-block mt-2">✏️ Изменено: @note.EditedAt.ToString("g")</small>
+
+
+                            <small class="text-muted d-block mt-2">🕒 @note.CreatedAt.ToString("g")</small>
+                            <small class="text-muted d-block mt-2">✏️ @note.EditedAt.ToString("g")</small>
                             @if (note.IsAddedToCalendar)
                             {
                                 <span class="right-side text-muted" style="margin-top: -10px; margin-right: 10px">
