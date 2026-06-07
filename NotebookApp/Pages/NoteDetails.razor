@@ -97,6 +97,7 @@
                                            @onkeyup="(e) => HandleEditTaskKeyUp(e, task)" />
                     
                                     <button type="button"
+                                            title="удалить"
                                             class="invisible-btn"
                                             @onclick="() => RemoveTaskFromEdit(task)">
                                         <span>❌</span>
@@ -176,6 +177,7 @@
 
                             <button type="button"
                                     class="invisible-btn"
+                                    title="удалить"
                                     @onclick="() => RemoveTaskFromDetails(task)">
                                 <span>❌</span>
                             </button>
