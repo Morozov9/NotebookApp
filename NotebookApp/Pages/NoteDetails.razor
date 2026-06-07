@@ -131,9 +131,7 @@
                 <!-- Полный текст заметки -->
                 @if (note.Type == NoteType.Text)
                 {
-                    
                     <p class="text-dark fs-5" style="white-space: pre-wrap; color: var(--bs-body-color) !important;">@note.Content</p>
-
                 }
 
                 else
@@ -148,10 +146,13 @@
                             </button>
                 
                             <span class="flex-grow-1 fs-5" 
-                                  style="white-space: pre-wrap; 
-                             color: var(--bs-body-color) !important; 
-                             text-decoration: @(task.IsCompleted ? "line-through" : "none");
-                             opacity: @(task.IsCompleted ? "0.6" : "1");">
+                                  style="white-space: pre-wrap;
+                                  word-break: break-word;
+                                  overflow-wrap: break-word;
+                                  min-width: 0;
+                                  color: var(--bs-body-color) !important; 
+                                  text-decoration: @(task.IsCompleted ? "line-through" : "none");
+                                  opacity: @(task.IsCompleted ? "0.6" : "1");">
                                 @task.Text
                             </span>
 
