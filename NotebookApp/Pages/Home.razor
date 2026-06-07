@@ -33,7 +33,7 @@
         <div class="d-flex justify-content-between align-items-center mb-2">
             <h5>Новая заметка</h5>
             <!-- Приписка об обязательности заголовка -->
-            @if (TitleIsIncorrect)
+            @if (_isIncorrectTitle)
             {
                 <small class="text-danger fw-bold">* Заголовок обязателен для заполнения</small>
             }
@@ -221,7 +221,6 @@
                             }
 
 
-
                             <small class="text-muted d-block mt-2">🕒 @note.CreatedAt.ToString("g")</small>
                             <small class="text-muted d-block mt-2">✏️ @note.EditedAt.ToString("g")</small>
                             @if (note.IsAddedToCalendar)
@@ -247,6 +246,7 @@
     private List<string> availableTags = new() { "Без тега", "Учёба", "Работа", "Личное", "Идеи" };
 
     private List<OneTask> newTasks = new() { new OneTask() };
+    private bool _isIncorrectTasks;
     
     private string newTitle = "";
     private string newContent = "";
@@ -254,7 +254,7 @@
     private string newTag = "Без тега";
     private string newNoteColor = "#ffffff";
     private string SearchString { get; set; } = "";
-    private bool TitleIsIncorrect;
+    private bool _isIncorrectTitle;
     
     private CalendarWindow ModalWindow { get; set; } = null!;
 
@@ -299,22 +299,25 @@
     {
         if (string.IsNullOrWhiteSpace(newTitle))
         {
-            TitleIsIncorrect = true;
+            _isIncorrectTitle = true;
             return;
         }
 
-        TitleIsIncorrect = false;
+        _isIncorrectTitle = false;
 
-        if (newTasks.Count < 1)
+        if (newTasks.Count == 1 && string.IsNullOrEmpty(newTasks[0].Text))
         {
+            _isIncorrectTasks = true;
             return;
         }
+
+        _isIncorrectTasks = false;
         
         var dates = _dateParser.ParseDates(newContent);
         
         notes.Add(new Note {Type = NoteType.Tasks, 
             Title = newTitle, 
-            Tasks = new List<OneTask>(newTasks), 
+            Tasks = new List<OneTask>(string.IsNullOrEmpty(newTasks[^1].Text)?newTasks[..^1]:newTasks), 
             Tag = newTag,
             Dates = dates, 
             Color = newNoteColor});
@@ -419,11 +422,11 @@
     {
             if (string.IsNullOrWhiteSpace(newTitle))
             {
-                TitleIsIncorrect = true;
+                _isIncorrectTitle = true;
                 return;
             }
 
-            TitleIsIncorrect = false;
+            _isIncorrectTitle = false;
         
         
             var dates = _dateParser.ParseDates(newContent);

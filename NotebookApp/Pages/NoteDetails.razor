@@ -223,7 +223,7 @@
     
     private void RemoveTaskFromEdit(OneTask task)
     {
-        note.Tasks.Remove(task);
+        note!.Tasks.Remove(task);
     
         // Если удалили вообще все задачи, оставим одну пустую строку, чтобы поле не исчезало
         if (!note.Tasks.Any())
@@ -234,7 +234,7 @@
     
     private void HandleEditTaskKeyDown(KeyboardEventArgs e, OneTask currentTask)
     {
-        if (note.Tasks.Any(t => string.IsNullOrWhiteSpace(t.Text)))
+        if (note!.Tasks.Any(t => string.IsNullOrWhiteSpace(t.Text)))
         {
             return;
         }
