@@ -17,6 +17,7 @@ public class Note
     public bool Star { get; set; }
     public bool IsAddedToCalendar { get; set; }
     public List<DateEvent> DateEvents { get; set; } = new();
+    // public List<DateTime> newDates { get; set; } = new();
     
 }
 

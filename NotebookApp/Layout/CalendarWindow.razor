@@ -24,7 +24,14 @@
         <div class="modal-buttons">
             @if (OsChecker.GetOperatingSystem() == "win")
             {
-                <button class="btn btn-success" @onclick="HandleConfirmWin">Да</button>
+                @if (mode == Mode.Create)
+                {
+                    <button class="btn btn-success" @onclick="HandleConfirmWinCreate">Да</button>
+                }
+                else
+                {
+                    <button class="btn btn-success" @onclick="HandleConfirmWinEdit">Да</button>
+                }
             }
             else{
                 <button class="btn btn-success" @onclick="HandleConfirmIos">Да</button>
@@ -44,26 +51,49 @@
     public EventCallback<List<Note>> NotesChanged { get; set; }
     
     private Note? _lastNote;
+    private List<DateTime>? _newDates;
     private DateParser _dateParser = new();
+    private List<DateEvent>? _newDateEvents;
+    private Mode mode = Mode.Create;
+
+    enum Mode
+    {
+        Edit,
+        Create
+    }
     
 
     // Переменная состояния окна (скрыто/показано)
     private bool _isModalVisible = false;
 
     // Метод открытия
-    public void OpenModal(Note note)
+    public void OpenModalEdit(Note note, List<DateTime> newDates, List<DateEvent>? newDateEvents)
     {
         _lastNote = note;
+        _newDates = newDates;
+        _newDateEvents = newDateEvents;
+        _isModalVisible = true;
+        mode = Mode.Edit;
+        StateHasChanged();
+    }
+
+    public void OpenModalCreate(Note note)
+    {
+        _lastNote = note;
+        mode = Mode.Create;
+        
         _isModalVisible = true;
         StateHasChanged();
     }
+    
+    
+    
 
 
     private void CloseModal() => _isModalVisible = false;
 
 
-
-    private async Task HandleConfirmWin()
+    private async Task HandleConfirmWinCreate()
     {
         if (_lastNote != null)
         {
@@ -71,7 +101,6 @@
 
             if (_lastNote.Type == NoteType.Text)
             {
-                var dates = _dateParser.ParseDates(_lastNote.Content);
                 _lastNote.IsAddedToCalendar = true;
             
                 var noteIndex = Notes.FindIndex(n => n.Id == _lastNote.Id);
@@ -81,7 +110,7 @@
                     await NotesChanged.InvokeAsync(Notes);
                 }
 
-                foreach (var date in dates)
+                foreach (var date in _lastNote.Dates)
                 {
                     await JsRuntime.InvokeVoidAsync("open", GoogleCalendar.LinkToGoogleCalendar(_lastNote, date), "_blank");
                 }
@@ -89,8 +118,41 @@
 
             else
             {
-
                 foreach (var dateEvent in _lastNote.DateEvents)
+                {
+                    await JsRuntime.InvokeVoidAsync("open", GoogleCalendar.LinkToGoogleCalendar(_lastNote.Title, dateEvent.Date, dateEvent.Event), "_blank");
+                }
+            }
+        }
+
+        CloseModal();
+    }
+
+    private async Task HandleConfirmWinEdit()
+    {
+        if (_lastNote != null)
+        {
+
+            if (_lastNote.Type == NoteType.Text)
+            {
+                _lastNote.IsAddedToCalendar = true;
+            
+                var noteIndex = Notes.FindIndex(n => n.Id == _lastNote.Id);
+                if (noteIndex != -1)
+                {
+                    Notes[noteIndex] = _lastNote;
+                    await NotesChanged.InvokeAsync(Notes);
+                }
+
+                foreach (var date in _newDates)
+                {
+                    await JsRuntime.InvokeVoidAsync("open", GoogleCalendar.LinkToGoogleCalendar(_lastNote, date), "_blank");
+                }
+            }
+
+            else
+            {
+                foreach (var dateEvent in _newDateEvents)
                 {
                     await JsRuntime.InvokeVoidAsync("open", GoogleCalendar.LinkToGoogleCalendar(_lastNote.Title, dateEvent.Date, dateEvent.Event), "_blank");
                 }

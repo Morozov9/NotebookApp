@@ -341,14 +341,7 @@
         }
         
         
-        
-        
-        
         bool areEqual = dateEvents.OrderBy(x => x.Date).SequenceEqual(note.DateEvents.OrderBy(x => x.Date));
-        if (!areEqual)
-        {
-            note.DateEvents = dateEvents;
-        }
         
         
         note.Title = editTitle;
@@ -358,20 +351,19 @@
         note.Tasks = new List<OneTask>(string.IsNullOrEmpty(note!.Tasks[^1].Text) ? note!.Tasks[..^1] : note!.Tasks);
         
         
+        if (dateEvents.Count != 0 && !areEqual)
+        {
+            var newDateEvents = dateEvents.Where(x => !(note.DateEvents.Select(n => n.Date).Contains(x.Date))).ToList();
+            
+            ModalWindow.OpenModalEdit(note, null, newDateEvents);
+            note.DateEvents = dateEvents; 
+            
+        }
+        
         await LocalStorage.SetItemAsync("my_notes", allNotes);
         isEditing = false;
         
-        
-        
-        if (dateEvents.Count != 0 && !areEqual)
-        {
-            ModalWindow.OpenModal(note);
-        }
-        
-        
     }
-    
-    
     
     
     private async Task SaveEditText()
@@ -386,19 +378,16 @@
         
         var dates = _dateParser.ParseDates(note.Content);
         bool areEqual = dates.OrderBy(x => x).SequenceEqual(note.Dates.OrderBy(x => x));
-        if (!areEqual)
-        {
-            note.Dates = dates;
-        }
 
-        await LocalStorage.SetItemAsync("my_notes", allNotes);
-        isEditing = false;
-        
 
         if (dates.Count != 0 && !areEqual)
         {
-            ModalWindow.OpenModal(note);
+            ModalWindow.OpenModalEdit(note, dates, null);
+            note.Dates = dates;
         }
+        
+        await LocalStorage.SetItemAsync("my_notes", allNotes);
+        isEditing = false;
         
     }
 
