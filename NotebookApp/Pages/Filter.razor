@@ -120,12 +120,39 @@
                                 <span class="badge mb-2" style="background-color: @GetTagColor(note.Tag); color: @(Theme.IsDarkMode ? "#ffffff" : "#000000") !important;">
                                     🏷️ @note.Tag
                                 </span>
+                                <br/>
                             }
 
                             
-                            <p class="card-text text-secondary" style="white-space: pre-wrap;">
-                                @(note.Content.Length > 150 ? note.Content.Substring(0, 150) + "..." : note.Content)
-                            </p>
+                            @if (note.Type == NoteType.Text)
+                            {
+                                <p class="card-text text-secondary" style="white-space: pre-wrap;">
+                                    @(note.Content.Length > 150 ? note.Content.Substring(0, 150) + "..." : note.Content)
+                                </p>
+                            }
+                            else
+                            {
+                                for(int i = 0; i < note.Tasks.Count && i < 3; i++)
+                                {
+                                    <button type="button"
+                                            class="invisible-btn"
+                                            @onclick="() => note.Tasks[i].IsCompleted = !note.Tasks[i].IsCompleted">
+                                        <span>@(note.Tasks[i].IsCompleted ? "✅" : "⬜")</span>
+                                    </button>
+                                    
+                                    <span class="card-text text-secondary" style="white-space: pre-wrap;">
+                                        @(note.Tasks[i].Text.Length > 50 ? note.Tasks[i].Text.Substring(0, 50) + "..." : note.Tasks[i].Text)
+                                    </span>
+                                    <br/>
+                                }
+
+                                if (note.Tasks.Count > 3)
+                                {
+                                    <span class="card-text text-secondary" style="font-size: 40px; margin-top: -50px; display: inline-block;">...</span>
+                                }
+                                
+                                
+                            }
                             
                             <small class="text-muted">🕒 Создано: @note.CreatedAt.ToString("g")</small>
                             <small class="text-muted d-block mt-2">✏️ Изменено: @note.EditedAt.ToString("g")</small>

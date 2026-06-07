@@ -221,12 +221,29 @@
                             }
                             else
                             {
-                                <p class="card-text text-secondary" style="white-space: pre-wrap;">
-                                    @(note.Tasks[0].Text.Length > 150 ? note.Tasks[0].Text.Substring(0, 150) + "..." : note.Tasks[0].Text)
-                                </p>
+                                for(int i = 0; i < note.Tasks.Count && i < 3; i++)
+                                {
+                                    <button type="button"
+                                            class="invisible-btn"
+                                            @onclick="() => note.Tasks[i].IsCompleted = !note.Tasks[i].IsCompleted">
+                                        <span>@(note.Tasks[i].IsCompleted ? "✅" : "⬜")</span>
+                                    </button>
+                                    
+                                    <span class="card-text text-secondary" style="white-space: pre-wrap;">
+                                        @(note.Tasks[i].Text.Length > 50 ? note.Tasks[i].Text.Substring(0, 50) + "..." : note.Tasks[i].Text)
+                                    </span>
+                                    <br>
+                                }
+
+                                if (note.Tasks.Count > 3)
+                                {
+                                    <span class="card-text text-secondary" style="font-size: 40px; margin-top: -50px; display: inline-block;">...</span>
+                                }
+                                
+                                
                             }
 
-
+                            
                             <small class="text-muted d-block mt-2">🕒 @note.CreatedAt.ToString("g")</small>
                             <small class="text-muted d-block mt-2">✏️ @note.EditedAt.ToString("g")</small>
                             @if (note.IsAddedToCalendar)
