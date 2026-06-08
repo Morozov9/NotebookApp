@@ -161,7 +161,7 @@
                         <div class="d-flex align-items-center gap-2 py-1">
                             <button type="button"
                                     class="invisible-btn"
-                                    @onclick="() => task.IsCompleted = !task.IsCompleted">
+                                    @onclick="() => ToggleTaskInternal(task)">
                                 <span>@(task.IsCompleted ? "✅" : "⬜")</span>
                             </button>
                 
@@ -193,7 +193,7 @@
                     ✏️ Дата редактирования: @note.EditedAt.ToString("F")
                     @if (note.IsAddedToCalendar)
                     {
-                        <br \>
+                        <br />
                         <span>
                             🗓️ Добавлено в календарь
                         </span>
@@ -236,6 +236,20 @@
         Theme.OnThemeChanged += StateHasChanged;
     }
 
+    private async Task ToggleTaskInternal(OneTask task)
+    {
+        if (note == null) return;
+
+        var targetTask = note.Tasks.FirstOrDefault(t => t.Id == task.Id);
+        if (targetTask != null)
+        {
+            targetTask.IsCompleted = !targetTask.IsCompleted;
+            note.EditedAt = DateTime.Now;
+            
+            await LocalStorage.SetItemAsync("my_notes", allNotes);
+        }
+    }
+    
     protected override async Task OnParametersSetAsync()
     {
         // Загружаем список из локального хранилища браузера

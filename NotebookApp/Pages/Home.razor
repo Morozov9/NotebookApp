@@ -52,8 +52,8 @@
         <div class="mb-2">
             
             <select class="form-select" @bind="_noteType">
-                <option value="Tasks">список</option>
-                <option value="Text">текст</option>
+                <option value="Tasks">Список</option>
+                <option value="Text">Текст</option>
             </select>
         </div>
             
@@ -253,14 +253,17 @@
                             {
                                 for(int i = 0; i < note.Tasks.Count && i < 3; i++)
                                 {
+                                    var currentTask = note.Tasks[i]; // Выносим объект в локальную переменную
+    
                                     <button type="button"
-                                            class="invisible-btn"
-                                            @onclick="() => note.Tasks[i].IsCompleted = !note.Tasks[i].IsCompleted">
-                                        <span>@(note.Tasks[i].IsCompleted ? "✅" : "⬜")</span>
+                                            class="invisible-btn align-middle"
+                                            @onclick="() => ToggleTask(note, currentTask)" 
+                                            @onclick:stopPropagation>
+                                        <span>@(currentTask.IsCompleted ? "✅" : "⬜")</span>
                                     </button>
-                                    
-                                    <span class="card-text text-secondary" style="white-space: pre-wrap; text-decoration: @(note.Tasks[i].IsCompleted ? "line-through" : "none");">
-                                        @(note.Tasks[i].Text.Length > 50 ? note.Tasks[i].Text.Substring(0, 50) + "..." : note.Tasks[i].Text)
+    
+                                    <span class="card-text text-secondary align-middle" style="white-space: pre-wrap; text-decoration: @(currentTask.IsCompleted ? "line-through" : "none");">
+                                        @(currentTask.Text.Length > 50 ? currentTask.Text.Substring(0, 50) + "..." : currentTask.Text)
                                     </span>
                                     <br>
                                 }
@@ -325,6 +328,22 @@
     private CalendarWindow ModalWindow { get; set; } = null!;
 
     private DateParser _dateParser = new();
+    
+    
+    private async Task ToggleTask(Note note, OneTask task)
+    {
+        var targetTask = note.Tasks.FirstOrDefault(t => t.Id == task.Id);
+    
+        if (targetTask != null)
+        {
+            targetTask.IsCompleted = !targetTask.IsCompleted;
+            
+            note.EditedAt = DateTime.Now; 
+            
+            await LocalStorage.SetItemAsync("my_notes", notes);
+        }
+    }
+
     
     
     private void RemoveTaskFromCreate(OneTask task)
@@ -478,17 +497,21 @@
                     
                 case "EditedAt":
                     if (sortDescending)
-                        sortedUnpinned = unpinned.OrderByDescending(n => n.EditedAt);
+                        sortedUnpinned = unpinned.OrderByDescending(n => n.EditedAt).ThenByDescending(n => n.CreatedAt);
                     else
-                        sortedUnpinned = unpinned.OrderBy(n => n.EditedAt);
+                        sortedUnpinned = unpinned.OrderBy(n => n.EditedAt).ThenBy(n => n.CreatedAt);
                     break;
                     
                 case "Star":
                 default:
                     if (sortDescending)
-                        sortedUnpinned = unpinned.OrderByDescending(n => n.Star);
+                        sortedUnpinned = unpinned.OrderByDescending(n => n.Star)
+                            .ThenByDescending(n => n.EditedAt)
+                            .ThenByDescending(n => n.CreatedAt);
                     else
-                        sortedUnpinned = unpinned.OrderBy(n => n.Star);
+                        sortedUnpinned = unpinned.OrderBy(n => n.Star)
+                            .ThenBy(n => n.EditedAt)
+                            .ThenBy(n => n.CreatedAt);
                     break;
             }
 

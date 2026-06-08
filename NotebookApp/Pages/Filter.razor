@@ -99,31 +99,34 @@
                         
                         
                         <div class="card-body">
-                            <h5 class="card-title text-primary">
-                                @note.Title
-                                
-                                @if (!note.Star)
-                                {
-                                    <button title="Важное" class="invisible-btn" type="button" style="margin-left: 10px; width: 17px; height: 17px" @onclick="() => Star(note, true)" @onclick:stopPropagation>
-                                        <img src="icons/star/starBlack.png" alt="Иконка кнопки">
-                                    </button>
-                                }
-                                else
-                                {
-                                    <button title="Важное" class="invisible-btn" type="button" style="margin-left: 10px; width: 17px; height: 17px" @onclick="() => Star(note, false)" @onclick:stopPropagation>
-                                        <img src="icons/star/starYellow.png" alt="Иконка кнопки">
-                                    </button>
-                                }
-                            </h5>
-                            @if (note.Tag != "Без тега")
-                            {
-                                <span class="badge mb-2" style="background-color: @GetTagColor(note.Tag); color: @(Theme.IsDarkMode ? "#ffffff" : "#000000") !important;">
-                                    🏷️ @note.Tag
-                                </span>
-                                <br/>
-                            }
+                            <div class="d-flex justify-content-between align-items-start">
+                                <h5 class="card-title text-primary mb-1">
+                                    @note.Title
 
-                            
+
+                                    @if (!note.Star)
+                                    {
+                                        <button title="Важное" class="invisible-btn" type="button" style="margin-left: 10px; width: 17px; height: 17px" @onclick="() => Star(note, true)" @onclick:stopPropagation>
+                                            <img src="icons/star/starBlack.png" alt="Иконка кнопки">
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button title="Важное" class="invisible-btn" type="button" style="margin-left: 10px; width: 17px; height: 17px" @onclick="() => Star(note, false)" @onclick:stopPropagation>
+                                            <img src="icons/star/starYellow.png" alt="Иконка кнопки">
+                                        </button>
+                                    }
+
+                                </h5>
+                                <div>
+                                    @if (note.Tag != "Без тега")
+                                    {
+                                        <span class="badge mb-2" style="background-color: @GetTagColor(note.Tag); color: @(Theme.IsDarkMode ? "#ffffff" : "#000000") !important; margin-right: 20px">
+                                            🏷️ @note.Tag
+                                        </span>
+                                    }
+                                </div>
+                            </div>
                             @if (note.Type == NoteType.Text)
                             {
                                 <p class="card-text text-secondary" style="white-space: pre-wrap;">
@@ -134,16 +137,19 @@
                             {
                                 for(int i = 0; i < note.Tasks.Count && i < 3; i++)
                                 {
+                                    var currentTask = note.Tasks[i]; // Выносим объект в локальную переменную
+    
                                     <button type="button"
-                                            class="invisible-btn"
-                                            @onclick="() => note.Tasks[i].IsCompleted = !note.Tasks[i].IsCompleted">
-                                        <span>@(note.Tasks[i].IsCompleted ? "✅" : "⬜")</span>
+                                            class="invisible-btn align-middle"
+                                            @onclick="() => ToggleTask(note, currentTask)" 
+                                            @onclick:stopPropagation>
+                                        <span>@(currentTask.IsCompleted ? "✅" : "⬜")</span>
                                     </button>
-                                    
-                                    <span class="card-text text-secondary" style="white-space: pre-wrap;">
-                                        @(note.Tasks[i].Text.Length > 50 ? note.Tasks[i].Text.Substring(0, 50) + "..." : note.Tasks[i].Text)
+    
+                                    <span class="card-text text-secondary align-middle" style="white-space: pre-wrap; text-decoration: @(currentTask.IsCompleted ? "line-through" : "none");">
+                                        @(currentTask.Text.Length > 50 ? currentTask.Text.Substring(0, 50) + "..." : currentTask.Text)
                                     </span>
-                                    <br/>
+                                    <br>
                                 }
 
                                 if (note.Tasks.Count > 3)
@@ -153,9 +159,10 @@
                                 
                                 
                             }
+
                             
-                            <small class="text-muted">🕒 Создано: @note.CreatedAt.ToString("g")</small>
-                            <small class="text-muted d-block mt-2">✏️ Изменено: @note.EditedAt.ToString("g")</small>
+                            <small class="text-muted d-block mt-2">🕒 @note.CreatedAt.ToString("g")</small>
+                            <small class="text-muted d-block mt-2">✏️ @note.EditedAt.ToString("g")</small>
                             @if (note.IsAddedToCalendar)
                             {
                                 <span class="right-side text-muted" style="margin-top: -10px; margin-right: 10px">
@@ -191,6 +198,20 @@
         if (sortBy == "Star")
             return "Важные сначала";
         return "Сначала новые";
+    }
+    
+    private async Task ToggleTask(Note note, OneTask task)
+    {
+        var targetTask = note.Tasks.FirstOrDefault(t => t.Id == task.Id);
+    
+        if (targetTask != null)
+        {
+            targetTask.IsCompleted = !targetTask.IsCompleted;
+            
+            note.EditedAt = DateTime.Now; 
+            
+            await LocalStorage.SetItemAsync("my_notes", notes);
+        }
     }
     
     private IEnumerable<Note> FilteredNotes
@@ -233,17 +254,21 @@
                     
                 case "EditedAt":
                     if (sortDescending)
-                        sortedUnpinned = unpinned.OrderByDescending(n => n.EditedAt);
+                        sortedUnpinned = unpinned.OrderByDescending(n => n.EditedAt).ThenByDescending(n => n.CreatedAt);
                     else
-                        sortedUnpinned = unpinned.OrderBy(n => n.EditedAt);
+                        sortedUnpinned = unpinned.OrderBy(n => n.EditedAt).ThenBy(n => n.CreatedAt);
                     break;
                     
                 case "Star":
                 default:
                     if (sortDescending)
-                        sortedUnpinned = unpinned.OrderByDescending(n => n.Star);
+                        sortedUnpinned = unpinned.OrderByDescending(n => n.Star)
+                            .ThenByDescending(n => n.EditedAt)
+                            .ThenByDescending(n => n.CreatedAt);
                     else
-                        sortedUnpinned = unpinned.OrderBy(n => n.Star);
+                        sortedUnpinned = unpinned.OrderBy(n => n.Star)
+                            .ThenBy(n => n.EditedAt)
+                            .ThenBy(n => n.CreatedAt);
                     break;
             }
 
