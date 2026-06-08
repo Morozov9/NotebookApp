@@ -34,7 +34,16 @@
                 }
             }
             else{
-                <button class="btn btn-success" @onclick="HandleConfirmIos">Да</button>
+                
+                @if (mode == Mode.Create)
+                {
+                    <button class="btn btn-success" @onclick="HandleConfirmIosCreate">Да</button>
+                }
+                else
+                {
+                    <button class="btn btn-success" @onclick="HandleConfirmIosEdit">Да</button>
+                }
+                
             }
             <button class="btn btn-danger" @onclick="HandleCancel">Нет</button>
         </div>
@@ -89,7 +98,6 @@
     
     
 
-
     private void CloseModal() => _isModalVisible = false;
 
 
@@ -97,19 +105,11 @@
     {
         if (_lastNote != null)
         {
+            _lastNote.IsAddedToCalendar = true;
 
 
             if (_lastNote.Type == NoteType.Text)
             {
-                _lastNote.IsAddedToCalendar = true;
-            
-                var noteIndex = Notes.FindIndex(n => n.Id == _lastNote.Id);
-                if (noteIndex != -1)
-                {
-                    Notes[noteIndex] = _lastNote;
-                    await NotesChanged.InvokeAsync(Notes);
-                }
-
                 foreach (var date in _lastNote.Dates)
                 {
                     await JsRuntime.InvokeVoidAsync("open", GoogleCalendar.LinkToGoogleCalendar(_lastNote, date), "_blank");
@@ -132,18 +132,11 @@
     {
         if (_lastNote != null)
         {
+            _lastNote.IsAddedToCalendar = true;
 
             if (_lastNote.Type == NoteType.Text)
             {
-                _lastNote.IsAddedToCalendar = true;
             
-                var noteIndex = Notes.FindIndex(n => n.Id == _lastNote.Id);
-                if (noteIndex != -1)
-                {
-                    Notes[noteIndex] = _lastNote;
-                    await NotesChanged.InvokeAsync(Notes);
-                }
-
                 foreach (var date in _newDates)
                 {
                     await JsRuntime.InvokeVoidAsync("open", GoogleCalendar.LinkToGoogleCalendar(_lastNote, date), "_blank");
@@ -162,41 +155,34 @@
         CloseModal();
     }
     
-    private async Task HandleConfirmIos()
+    private async Task HandleConfirmIosCreate()
     {
         if (_lastNote != null)
         {
+            _lastNote.IsAddedToCalendar = true;
+            await JsRuntime.InvokeVoidAsync("downloadIcsFile", "NotebookAppEvents.ics", AppleCalendar.AppleCalendarFile(_lastNote));
 
+        }
 
+        CloseModal();
+    }
+    
+    
+    
+    
+    private async Task HandleConfirmIosEdit()
+    {
+        if (_lastNote != null)
+        {
             if (_lastNote.Type == NoteType.Text)
             {
-                var dates = _dateParser.ParseDates(_lastNote.Content);
-                _lastNote.IsAddedToCalendar = true;
-            
-                var noteIndex = Notes.FindIndex(n => n.Id == _lastNote.Id);
-                if (noteIndex != -1)
-                {
-                    Notes[noteIndex] = _lastNote;
-                    await NotesChanged.InvokeAsync(Notes);
-                }
-
-                await JsRuntime.InvokeVoidAsync("downloadIcsFile", "NotebookAppEvents.ics", AppleCalendar.AppleCalendarFile(_lastNote, dates));
+                await JsRuntime.InvokeVoidAsync("downloadIcsFile", "NotebookAppEvents.ics", AppleCalendar.AppleCalendarFileNew(_lastNote, _newDates!));
             }
 
             else
             {
-                
-                
-                
+                await JsRuntime.InvokeVoidAsync("downloadIcsFile", "NotebookAppEvents.ics", AppleCalendar.AppleCalendarFileNew(_lastNote, _newDateEvents!));
             }
-
-            
-            
-            
-            
-            
-            
-            
         }
 
         CloseModal();
