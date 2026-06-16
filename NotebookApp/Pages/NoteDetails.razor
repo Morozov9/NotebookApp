@@ -444,14 +444,14 @@
         if (note == null) return;
         allNotes.Remove(note);
         await LocalStorage.SetItemAsync("my_notes", allNotes);
-        Navigation.NavigateTo("/"); // Перенаправляем на главную
+        Navigation.NavigateTo("/NotebookApp/"); // Перенаправляем на главную
     }
 
     private async Task GoBack()
     {
         await LocalStorage.SetItemAsync("my_notes", allNotes);
 
-        Navigation.NavigateTo("/");
+        Navigation.NavigateTo("/NotebookApp/");
     }
 
     // Метод выбора цвета, адаптирующийся под темную и светлую темы
