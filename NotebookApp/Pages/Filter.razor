@@ -82,7 +82,7 @@
                 <div class="col-12 mb-3">
                     <div class="card h-100 shadow-sm border border-secondary" 
                          style="cursor: pointer; border-left: 5px solid @note.Color; background-color: @(note.Color + "20");" 
-                         @onclick='() => Navigation.NavigateTo($"/NotebookApp/note/{id}")'>
+                         @onclick='() => Navigation.NavigateTo($"/NotebookApp/note/{note.id}")'>
                         
                         @if (!note.IsPinned)
                         {
