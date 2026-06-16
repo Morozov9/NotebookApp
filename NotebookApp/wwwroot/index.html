@@ -5,18 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>NotebookApp</title>
-    <base href="/NotebookApp/" />
-    
-    <script type="text/javascript">
-      (function(l) {
-        var repoName = '/NotebookApp';
-        if (l.search.startsWith('?p=')) {
-          var r = decodeURIComponent(l.search.slice(3));
-          window.history.replaceState(null, null, repoName + r + l.hash);
-        }
-      }(window.location))
-    </script>
-
+    <base href="/" />
     <link rel="preload" id="webassembly" />
     <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="css/app.css" />
