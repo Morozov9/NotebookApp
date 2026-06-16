@@ -18,8 +18,30 @@ jobs:
     - name: Publish Project
       run: dotnet publish NotebookApp/NotebookApp.csproj -c Release -o release
 
-    - name: Copy index.html to 404.html
-      run: cp release/wwwroot/index.html release/wwwroot/404.html
+    - name: Create Smart 404 Page
+      run: |
+        cat << 'EOF' > release/wwwroot/404.html
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <title>NotebookApp</title>
+          <script type="text/javascript">
+            var pathSegmentsToKeep = 1;
+            var l = window.location;
+            l.replace(
+              l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+              l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + '/?' +
+              l.pathname.slice(1).split('/').slice(pathSegmentsToKeep).join('/').replace(/&/g, '~and~') +
+              (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+              l.hash
+            );
+          </script>
+        </head>
+        <body>
+        </body>
+        </html>
+        EOF
 
     - name: Add .nojekyll file
       run: touch release/wwwroot/.nojekyll
