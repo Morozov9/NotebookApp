@@ -1,12 +1,15 @@
-﻿@inject ThemeService Theme
-<Router AppAssembly="@typeof(App).Assembly" NotFoundPage="typeof(Pages.NotFound)">
+@inject ThemeService Theme
+
+<Router AppAssembly="@typeof(App).Assembly" NotFoundPage="typeof(Pages.NotFound)" UseHashRouting="true">
     <Found Context="routeData">
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)"/>
         <FocusOnNavigate RouteData="@routeData" Selector="h1"/>
     </Found>
 </Router>
+
 <script src="CreateIcs.js"></script>
 <script src="Focus.js"></script>
+
 @code {
     protected override async Task OnInitializedAsync()
     {
