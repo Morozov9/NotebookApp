@@ -18,11 +18,11 @@ jobs:
     - name: Publish Project
       run: dotnet publish NotebookApp/NotebookApp.csproj -c Release -o release
 
-    - name: Fix Blazor Routing for GitHub Pages
-      run: |
-        cp release/wwwroot/index.html release/wwwroot/404.html
-        sed -i 's|<head>|<head><script type="text/javascript">\(function(l){if(l.search[0]==="?"){var r={};l.search.slice(1).split("\&").forEach(function(v){var a=v.split("=");r[a[0]]=a.slice(1).join("=")});if(r.p!==undefined){window.history.replaceState(null,null,l.pathname.slice(0,-1)+(r.p||"")+(r.q?"?"+r.q:"")+l.hash)}}}(window.location))</script>|' release/wwwroot/index.html
-        sed -i 's|<head>|<head><script type="text/javascript">\(function(l){if(l.search==="") {var p=l.pathname.replace('\''/'${{ github.event.repository.name }}'\'' , '\'''\'');window.location.replace(l.protocol+"//"+l.hostname+(l.port?":"+l.port:"")+l.pathname.slice(0,l.pathname.length-p.length)+"/?p="+p.replace(/\//g,"%2F"))}}(window.location))</script>|' release/wwwroot/404.html
+    - name: Copy index.html to 404.html
+      run: cp release/wwwroot/index.html release/wwwroot/404.html
+
+    - name: Add .nojekyll file
+      run: touch release/wwwroot/.nojekyll
 
     - name: Upload Artifacts
       uses: actions/upload-pages-artifact@v3
